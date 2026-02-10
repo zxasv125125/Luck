@@ -58,7 +58,7 @@ namespace EasterEgg
                 Type = "Fish",
                 Category = -4,
                 Price = price,
-                Texture = $"{VirtualPath}{textureName}", 
+                Texture = $"EasterEgg//Virtual/Textures/{textureName}", 
                 SpriteIndex = index,
                 ContextTags = contextTags,
                 ExcludeFromFishingCollection = false 
