@@ -44,9 +44,10 @@
   </ItemGroup>
 
   <ItemGroup>
-  <EmbeddedResource Include="Virtual\Textures\*.png" />
-  <EmbeddedResource Include="Virtual\Textures\*.xnb" />
-  <None Remove="Virtual\Textures\*.png" />
-  <None Remove="Virtual\Textures\*.xnb" />
-</ItemGroup>
+	  <EmbeddedResource Include="Virtual\Textures\*.png">
+	    <LogicalName>EasterEgg.Virtual.Textures.%(Filename)%(Extension)</LogicalName>
+	  </EmbeddedResource>
+	  <None Remove="Virtual\Textures\*.png" />
+	  <None Remove="Virtual\Textures\*.xnb" />
+	</ItemGroup>
 </Project>
