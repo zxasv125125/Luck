@@ -10,7 +10,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData;
-using StardewValley.GameData.Objects;
+using StardewValley.GameData.Objects;;
 
 namespace EasterEgg
 {
@@ -27,33 +27,43 @@ namespace EasterEgg
 
             try
             {
+                MethodInfo original = AccessTools.Method(typeof(LocalizedContentManager), nameof(LocalizedContentManager.Load), new[] { typeof(string) });
+                
+                if (original == null)
+                {
+                    Monitor.Log("Harmony Error: Could not find LocalizedContentManager.Load", LogLevel.Error);
+                    return;
+                }
+
                 harmony.Patch(
-                    original: AccessTools.Method(typeof(Game1), "get_xnb_content"), 
+                    original: original,
                     postfix: new HarmonyMethod(typeof(HarmonyPatchManager), nameof(Postfix_TextureLoad))
                 );
                 
-                Monitor.Log("Harmony patch applied to override internal asset loading.", LogLevel.Debug);
+                Monitor.Log("Harmony successfully patched LocalizedContentManager for virtual textures.", LogLevel.Debug);
             }
             catch (Exception ex)
             {
                 Monitor.Log($"Failed to apply Harmony patches: {ex.Message}", LogLevel.Error);
             }
         }
-
-        public static void Postfix_TextureLoad(ref Texture2D __result, string assetName)
+        public static void Postfix_TextureLoad<T>(ref T __result, string assetName)
         {
-            if (assetName.Contains("Virtual/Textures/", StringComparison.OrdinalIgnoreCase))
+            if (typeof(T) == typeof(Texture2D) && assetName.Contains("Virtual/Textures/", StringComparison.OrdinalIgnoreCase))
             {
                 string fileName = Path.GetFileName(assetName);
-                string resourceName = $"EasterEgg.Assets.Fish.{fileName}.png"; 
+                string[] resources = ModAssembly.GetManifestResourceNames();
+                string target = resources.FirstOrDefault(r => r.EndsWith($"{fileName}.png", StringComparison.OrdinalIgnoreCase));
+
+                if (target == null) return;
 
                 try
                 {
-                    using (Stream stream = ModAssembly.GetManifestResourceStream(resourceName))
+                    using (Stream stream = ModAssembly.GetManifestResourceStream(target))
                     {
                         if (stream != null)
                         {
-                            __result = Texture2D.FromStream(Game1.graphics.GraphicsDevice, stream);
+                            __result = (T)(object)Texture2D.FromStream(Game1.graphics.GraphicsDevice, stream);
                         }
                     }
                 }
@@ -64,4 +74,3 @@ namespace EasterEgg
         }
     }
 }
-
