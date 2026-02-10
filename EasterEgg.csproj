@@ -27,6 +27,11 @@
     <HintPath>libs\MonoGame.Framework.dll</HintPath>
     <Private>false</Private>
   </Reference>
+   <Reference Include="Mono.Android">
+  <HintPath>libs\Mono.Android.dll</HintPath>
+  <Private>false</Private>
+  </Reference>
+
 </ItemGroup>
 
 
