@@ -35,9 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="Assets\Fish\**\*.png" />
-    <None Remove="Assets\Fish\**\*.png" />
-    <EmbeddedResource Include="Assets\Fish\**\*.png" />
+    <Content Remove="Virtual\Textures\*.png" />
+    <None Remove="Virtual\Textures\*.png" />
+    <EmbeddedResource Include="Virtual\Textures\*.png" />
   </ItemGroup>
 
 </Project>
