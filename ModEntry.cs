@@ -1,7 +1,6 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.GameData.Fish;
 using StardewValley.GameData.Objects;
 
 namespace EasterEgg
