@@ -28,7 +28,6 @@ namespace EasterEgg
 
                 if (resourceName == null)
                 {
-                    monitor.Log($"[Critical] Resource matching '{assetName}' not found in DLL.", LogLevel.Error);
                     return null;
                 }
 
@@ -40,8 +39,6 @@ namespace EasterEgg
             }
             catch (Exception ex)
             {
-                monitor.Log($"[Critical] DLL Stream Error: {ex.Message}", LogLevel.Error);
-                return null;
             }
         }
     }
