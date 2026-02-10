@@ -10,32 +10,27 @@ namespace EasterEgg
     {
         private readonly IModHelper Helper;
         private readonly IMonitor Monitor;
-        private readonly string AssemblyName;
+        private readonly string RootPath = "EasterEgg.Assets.Fish";
 
         public AssetManager(IModHelper helper, IMonitor monitor)
         {
             this.Helper = helper;
             this.Monitor = monitor;
-            this.AssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
         }
 
         public void OnAssetRequested(AssetRequestedEventArgs e)
         {
-            if (e.NameWithoutLocale.IsEquivalentTo("Assets/Fish/degend"))
+            if (e.NameWithoutLocale.StartsWith("Assets/Fish/", StringComparison.OrdinalIgnoreCase))
             {
                 e.LoadFrom(() => 
                 {
-                    string resourceName = $"{this.AssemblyName}.Assets.Fish.degend.png";
-                    
-                    var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
-
+                    string assetName = Path.GetFileName(e.NameWithoutLocale.ToString());
+                    string resourcePath = $"{this.RootPath}.{assetName.ToLower()}.png";
+                    var assembly = Assembly.GetExecutingAssembly();
+                    var stream = assembly.GetManifestResourceStream(resourcePath);
                     if (stream == null)
                     {
-                        this.Monitor.Log($"[AssetError] Not Found: {resourceName}", LogLevel.Error);
-                        foreach (var name in Assembly.GetExecutingAssembly().GetManifestResourceNames())
-                        {
-                            this.Monitor.Log($"Filee inside DLL: {name}", LogLevel.Trace);
-                        }
+                        this.Monitor.Log($"[AssetError] not found '{resourcePath}' in DLL", LogLevel.Warn);
                         return null;
                     }
 
