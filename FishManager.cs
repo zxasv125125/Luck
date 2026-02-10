@@ -54,7 +54,6 @@ namespace EasterEgg
                 Type = "Fish",
                 Category = -4,
                 Price = price,
-                // Now uses the textureName parameter
                 Texture = $"Assets/Fish/{textureName}",
                 SpriteIndex = index,
                 ContextTags = contextTags,
