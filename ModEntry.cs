@@ -12,7 +12,6 @@ namespace EasterEgg
         {
             this.Assets = new AssetManager(helper, this.Monitor);
             this.Fish = new FishManager(helper, this.Monitor);
-            this.Animals = new AnimalManager(helper, this.Monitor);
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
         }
 
