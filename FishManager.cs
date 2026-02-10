@@ -4,7 +4,7 @@ using StardewModdingAPI.Events;
 using StardewValley.GameData.Objects;
 using StardewValley.GameData.Fish;
 
-namespace Luck
+namespace EasterEgg
 {
     public class FishManager
     {
