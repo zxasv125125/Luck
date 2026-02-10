@@ -113,7 +113,7 @@ namespace EasterEgg
                 DisplayName = "Degend",
                 Description = "A mythical marine creature thought to be an urban legend.",
                 Type = "Fish",
-                Category = ObjectData.FishCategory,
+                Category = -4,
                 Price = 30000,
                 Texture = this.repository.GetVirtualPath("Textures/Fish/Degend"),
                 SpriteIndex = 0,
@@ -126,7 +126,7 @@ namespace EasterEgg
                 DisplayName = "Golden Degend",
                 Description = "A shimmering variant of the already rare Degend. It radiates an ancient energy.",
                 Type = "Fish",
-                Category = ObjectData.FishCategory,
+                Category = -4,
                 Price = 100000,
                 Texture = this.repository.GetVirtualPath("Textures/Fish/Degend_Gold"),
                 SpriteIndex = 0,
@@ -139,7 +139,7 @@ namespace EasterEgg
                 DisplayName = "Fragmented Shell",
                 Description = "A pixelated shell fragment.",
                 Type = "Basic",
-                Category = ObjectData.JunkCategory,
+                Category = -28,
                 Price = 500,
                 Texture = this.repository.GetVirtualPath("Textures/Items/EggShell"),
                 SpriteIndex = 0
@@ -169,7 +169,7 @@ namespace EasterEgg
 
         public void OnUpdateTicked(UpdateTickedEventArgs e)
         {
-            if (!Context.IsWorldReady || !Game1.player.IsFishing) return;
+            if (!Context.IsWorldReady || Game1.player == null) return;
 
             if (Game1.player.CurrentTool is FishingRod rod && rod.isFishing)
             {
@@ -179,9 +179,9 @@ namespace EasterEgg
 
         private void HandleSpecialSpawnLogic(FishingRod rod)
         {
-            if (Game1.player.CurrentLocation?.Name == "Beach" && Game1.isRaining)
+            if (Game1.currentLocation?.Name == "Beach" && Game1.isRaining)
             {
-                if (rod.pullingFish && !rod.hit)
+                if (rod.isPullingFish && !rod.hit)
                 {
                     this.InjectGoldVariant(rod);
                 }
@@ -191,11 +191,15 @@ namespace EasterEgg
         private void InjectGoldVariant(FishingRod rod)
         {
             var field = typeof(FishingRod).GetField("whichFish", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (field != null && (string)field.GetValue(rod) == "EasterEgg_Degend")
+            if (field != null)
             {
-                if (this.random.NextDouble() < 0.15)
+                string currentFish = field.GetValue(rod) as string;
+                if (currentFish == "EasterEgg_Degend")
                 {
-                    field.SetValue(rod, "EasterEgg_Degend_Gold");
+                    if (this.random.NextDouble() < 0.15)
+                    {
+                        field.SetValue(rod, "EasterEgg_Degend_Gold");
+                    }
                 }
             }
         }
@@ -233,10 +237,14 @@ namespace EasterEgg
                 var dialogue = Game1.currentSpeaker.CurrentDialogue.Peek();
                 if (dialogue != null)
                 {
-                    if (Game1.player.HasFoundFish("EasterEgg_Degend_Gold"))
-                        dialogue.modifyDialogue("The Golden Degend... I thought it was just a fisherman's fever dream.");
-                    else if (Game1.player.HasFoundFish("EasterEgg_Degend"))
-                        dialogue.modifyDialogue("You caught a Degend? Remarkable. The tides are shifting.");
+                    if (Game1.player.fishCaught.ContainsKey("(O)EasterEgg_Degend_Gold"))
+                    {
+                        dialogue.SetText("The Golden Degend... I thought it was just a fisherman's fever dream.");
+                    }
+                    else if (Game1.player.fishCaught.ContainsKey("(O)EasterEgg_Degend"))
+                    {
+                        dialogue.SetText("You caught a Degend? Remarkable. The tides are shifting.");
+                    }
                 }
             }
         }
@@ -253,6 +261,17 @@ namespace EasterEgg
             {
                 who.experiencePoints[1] += 2000;
                 if (!who.mailReceived.Contains("Caught_Gold_Degend")) who.mailReceived.Add("Caught_Gold_Degend");
+            }
+        }
+    }
+
+    internal class ExtendedFishLogic
+    {
+        public void ApplyWeatherInfluence(string locationName)
+        {
+            if (locationName == "Beach" && Game1.isLightning)
+            {
+                Game1.player.experiencePoints[1] += 10;
             }
         }
     }
@@ -277,5 +296,26 @@ namespace EasterEgg
         public const string DEGEN_ID = "EasterEgg_Degend";
         public const string GOLD_ID = "EasterEgg_Degend_Gold";
         public const int LEGEND_LEVEL = 10;
+        public const int FISH_CAT = -4;
+        public const int JUNK_CAT = -28;
+    }
+
+    public class DataModel
+    {
+        public struct FishStats
+        {
+            public string Id;
+            public int Difficulty;
+            public string Movement;
+        }
+
+        public List<FishStats> GetStats()
+        {
+            return new List<FishStats>
+            {
+                new FishStats { Id = "EasterEgg_Degend", Difficulty = 110, Movement = "sinker" },
+                new FishStats { Id = "EasterEgg_Degend_Gold", Difficulty = 140, Movement = "sinker" }
+            };
+        }
     }
 }
