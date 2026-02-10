@@ -8,8 +8,8 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.GameData.Objects;
 using StardewValley.GameData;
+using StardewValley.GameData.Objects;
 using StardewValley.Menus;
 using StardewValley.Tools;
 
@@ -27,18 +27,14 @@ namespace EasterEgg
         {
             this.assetRepository = new AssetRepository();
             this.fishingEngine = new FishingEngineExtension(helper);
-            this.contentInjector = new ContentInjector(helper, this.assetRepository);
+            this.contentInjector = new ContentInjector(helper, this.Monitor, this.assetRepository);
             this.fishModule = new FishModule(helper, this.assetRepository, this.fishingEngine);
             this.eventLinker = new EventLinker(helper, this.fishModule, this.contentInjector);
 
-            this.Initialize();
-        }
-
-        private void Initialize()
-        {
-            this.eventLinker?.Subscribe();
+            this.eventLinker.Subscribe();
         }
     }
+
     internal enum TextureVariant
     {
         None,
@@ -53,8 +49,8 @@ namespace EasterEgg
 
         public TextureRecipe(string resourceKey, TextureVariant variant)
         {
-            this.ResourceKey = resourceKey;
-            this.Variant = variant;
+            ResourceKey = resourceKey;
+            Variant = variant;
         }
     }
 
@@ -62,15 +58,16 @@ namespace EasterEgg
     {
         private const string RootPath = "Virtual/Textures";
         private const string DefaultTextureKey = "degend";
+
         private readonly Dictionary<string, string> embeddedTextures = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, TextureRecipe> virtualTextureRecipes = new(StringComparer.OrdinalIgnoreCase);
 
         public AssetRepository()
         {
-            this.IndexEmbeddedTextures();
-            this.RegisterTextureRecipe("degend", DefaultTextureKey, TextureVariant.None);
-            this.RegisterTextureRecipe("degend_gold", DefaultTextureKey, TextureVariant.Gold);
-            this.RegisterTextureRecipe("eggshell", DefaultTextureKey, TextureVariant.Shell);
+            IndexEmbeddedTextures();
+            RegisterTextureRecipe("degend", DefaultTextureKey, TextureVariant.None);
+            RegisterTextureRecipe("degend_gold", DefaultTextureKey, TextureVariant.Gold);
+            RegisterTextureRecipe("eggshell", DefaultTextureKey, TextureVariant.Shell);
         }
 
         private void IndexEmbeddedTextures()
@@ -84,21 +81,18 @@ namespace EasterEgg
                 if (parts.Length < 2)
                     continue;
 
-                string fileName = parts[^2];
-                if (fileName.Length == 0)
                 string key = parts[^2];
                 if (key.Length == 0)
                     continue;
 
-                this.fallbackPaths[$"{this.RootPath}/{fileName}".ToLower()] = resourceName;
-                this.embeddedTextures[key] = resourceName;
+                embeddedTextures[key] = resourceName;
             }
         }
 
         private void RegisterTextureRecipe(string virtualTextureName, string resourceKey, TextureVariant variant)
         {
-            string assetPath = this.GetVirtualPath(virtualTextureName);
-            this.virtualTextureRecipes[assetPath] = new TextureRecipe(resourceKey, variant);
+            string assetPath = GetVirtualPath(virtualTextureName);
+            virtualTextureRecipes[assetPath] = new TextureRecipe(resourceKey, variant);
         }
 
         public string GetVirtualPath(string filename)
@@ -109,11 +103,12 @@ namespace EasterEgg
         public bool TryLoadTexture(GraphicsDevice graphicsDevice, string assetName, out Texture2D? texture)
         {
             texture = null;
-            TextureRecipe? recipe = this.ResolveRecipe(assetName);
+
+            TextureRecipe? recipe = ResolveRecipe(assetName);
             if (recipe == null)
                 return false;
 
-            if (!this.embeddedTextures.TryGetValue(recipe.ResourceKey, out string? resourcePath))
+            if (!embeddedTextures.TryGetValue(recipe.ResourceKey, out string? resourcePath))
                 return false;
 
             using Stream? stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
@@ -121,26 +116,29 @@ namespace EasterEgg
                 return false;
 
             Texture2D baseTexture = Texture2D.FromStream(graphicsDevice, stream);
+
             if (recipe.Variant == TextureVariant.None)
             {
                 texture = baseTexture;
                 return true;
             }
-            texture = this.BuildVariantTexture(graphicsDevice, baseTexture, recipe.Variant);
+
+            texture = BuildVariantTexture(graphicsDevice, baseTexture, recipe.Variant);
             baseTexture.Dispose();
             return true;
         }
 
         private TextureRecipe? ResolveRecipe(string assetName)
         {
-            if (this.virtualTextureRecipes.TryGetValue(assetName, out TextureRecipe? recipe))
+            if (virtualTextureRecipes.TryGetValue(assetName, out TextureRecipe? recipe))
                 return recipe;
 
             string key = assetName.Replace('\\', '/').Split('/').LastOrDefault() ?? string.Empty;
-            if (this.embeddedTextures.ContainsKey(key))
+
+            if (embeddedTextures.ContainsKey(key))
                 return new TextureRecipe(key, TextureVariant.None);
 
-            if (this.embeddedTextures.ContainsKey(DefaultTextureKey))
+            if (embeddedTextures.ContainsKey(DefaultTextureKey))
                 return new TextureRecipe(DefaultTextureKey, TextureVariant.None);
 
             return null;
@@ -164,11 +162,13 @@ namespace EasterEgg
                         (byte)Math.Min(255, c.G + 35),
                         (byte)Math.Max(0, c.B - 20),
                         c.A),
+
                     TextureVariant.Shell => new Color(
                         (byte)((c.R + c.G + c.B) / 3),
                         (byte)((c.R + c.G + c.B) / 3),
                         (byte)((c.R + c.G + c.B) / 3),
                         c.A),
+
                     _ => c
                 };
             }
@@ -182,23 +182,25 @@ namespace EasterEgg
     internal class ContentInjector
     {
         private readonly IModHelper helper;
+        private readonly IMonitor monitor;
         private readonly AssetRepository repository;
 
-        public ContentInjector(IModHelper helper, AssetRepository repository)
+        public ContentInjector(IModHelper helper, IMonitor monitor, AssetRepository repository)
         {
             this.helper = helper;
+            this.monitor = monitor;
             this.repository = repository;
         }
 
         public void OnAssetRequested(AssetRequestedEventArgs e)
         {
-            if (this.repository.TryLoadTexture(Game1.graphics.GraphicsDevice, e.NameWithoutLocale.Name, out Texture2D? texture) && texture != null)
+            if (repository.TryLoadTexture(Game1.graphics.GraphicsDevice, e.NameWithoutLocale.Name, out Texture2D? texture) && texture != null)
             {
                 e.LoadFrom(() => texture, AssetLoadPriority.Medium);
             }
             else if (e.NameWithoutLocale.Name.StartsWith("Virtual/Textures", StringComparison.OrdinalIgnoreCase))
             {
-                this.helper.Monitor.Log($"Embedded texture not found for '{e.NameWithoutLocale.Name}'.", LogLevel.Warn);
+                monitor.Log($"Embedded texture not found for '{e.NameWithoutLocale.Name}'.", LogLevel.Warn);
             }
 
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Objects"))
@@ -206,7 +208,7 @@ namespace EasterEgg
                 e.Edit(asset =>
                 {
                     var data = asset.AsDictionary<string, ObjectData>().Data;
-                    this.ApplyObjectPatches(data);
+                    ApplyObjectPatches(data);
                 });
             }
 
@@ -215,7 +217,7 @@ namespace EasterEgg
                 e.Edit(asset =>
                 {
                     var data = asset.AsDictionary<string, string>().Data;
-                    this.ApplyFishPatches(data);
+                    ApplyFishPatches(data);
                 });
             }
         }
@@ -230,9 +232,8 @@ namespace EasterEgg
                 Type = "Fish",
                 Category = -4,
                 Price = 30000,
-                Texture = this.repository.GetVirtualPath("degend"),
-                SpriteIndex = 0,
-                ContextTags = new List<string> { "category_fish", "fish_legendary", "item_legendary" }
+                Texture = repository.GetVirtualPath("degend"),
+                SpriteIndex = 0
             };
 
             data["EasterEgg_Degend_Gold"] = new ObjectData
@@ -243,9 +244,8 @@ namespace EasterEgg
                 Type = "Fish",
                 Category = -4,
                 Price = 100000,
-                Texture = this.repository.GetVirtualPath("degend_gold"),
-                SpriteIndex = 0,
-                ContextTags = new List<string> { "category_fish", "fish_legendary", "item_legendary" }
+                Texture = repository.GetVirtualPath("degend_gold"),
+                SpriteIndex = 0
             };
 
             data["EasterEgg_EggShell"] = new ObjectData
@@ -256,7 +256,7 @@ namespace EasterEgg
                 Type = "Basic",
                 Category = -28,
                 Price = 500,
-                Texture = this.repository.GetVirtualPath("eggshell"),
+                Texture = repository.GetVirtualPath("eggshell"),
                 SpriteIndex = 0
             };
         }
@@ -270,23 +270,16 @@ namespace EasterEgg
 
     internal class FishModule
     {
-        private readonly IModHelper helper;
-        private readonly AssetRepository repository;
-        private readonly FishingEngineExtension engine;
-        private readonly Random random = new Random();
+        private readonly Random random = new();
 
-        public FishModule(IModHelper helper, AssetRepository repository, FishingEngineExtension engine)
-        {
-            this.helper = helper;
-            this.repository = repository;
-            this.engine = engine;
-        }
+        public FishModule(IModHelper helper, AssetRepository repository, FishingEngineExtension engine) { }
 
         public void OnUpdateTicked(UpdateTickedEventArgs e)
         {
-            if (!Context.IsWorldReady || Game1.player == null) return;
+            if (!Context.IsWorldReady)
+                return;
 
-            if (Game1.player.CurrentTool is FishingRod rod && rod.isFishing)
+            if (Game1.player?.CurrentTool is FishingRod rod && rod.isFishing)
             {
                 if (Game1.player.currentLocation?.Name == "Beach" && Game1.isRaining)
                 {
@@ -295,10 +288,8 @@ namespace EasterEgg
                         var field = typeof(FishingRod).GetField("whichFish", BindingFlags.NonPublic | BindingFlags.Instance);
                         if (field != null && (string?)field.GetValue(rod) == "EasterEgg_Degend")
                         {
-                            if (this.random.NextDouble() < 0.15)
-                            {
+                            if (random.NextDouble() < 0.15)
                                 field.SetValue(rod, "EasterEgg_Degend_Gold");
-                            }
                         }
                     }
                 }
@@ -321,32 +312,32 @@ namespace EasterEgg
 
         public void Subscribe()
         {
-            this.helper.Events.Content.AssetRequested += (s, e) => this.contentInjector.OnAssetRequested(e);
-            this.helper.Events.GameLoop.UpdateTicked += (s, e) => this.fishModule.OnUpdateTicked(e);
-            this.helper.Events.Display.MenuChanged += this.OnMenuChanged;
+            helper.Events.Content.AssetRequested += (s, e) => contentInjector.OnAssetRequested(e);
+            helper.Events.GameLoop.UpdateTicked += (s, e) => fishModule.OnUpdateTicked(e);
+            helper.Events.Display.MenuChanged += OnMenuChanged;
         }
 
         private void OnMenuChanged(object? sender, MenuChangedEventArgs e)
         {
-            if (e.NewMenu is DialogueBox)
+            if (e.NewMenu is DialogueBox && Game1.currentSpeaker?.Name == "Willy")
             {
-                if (Game1.currentSpeaker?.Name == "Willy")
-                {
-                    var dialogue = Game1.currentSpeaker.CurrentDialogue.Peek();
-                    if (dialogue != null)
-                    {
-                        string? text = null;
-                        if (Game1.player.fishCaught.ContainsKey("(O)EasterEgg_Degend_Gold"))
-                            text = "The Golden Degend... I thought it was just a fisherman's fever dream.";
-                        else if (Game1.player.fishCaught.ContainsKey("(O)EasterEgg_Degend"))
-                            text = "You caught a Degend? Remarkable. The tides are shifting.";
+                var dialogue = Game1.currentSpeaker.CurrentDialogue.Peek();
+                if (dialogue == null)
+                    return;
 
-                        if (text != null)
-                        {
-                            var field = typeof(Dialogue).GetField("text", BindingFlags.Instance | BindingFlags.NonPublic) ?? typeof(Dialogue).GetField("_text", BindingFlags.Instance | BindingFlags.NonPublic);
-                            if (field != null) field.SetValue(dialogue, text);
-                        }
-                    }
+                string? text = null;
+
+                if (Game1.player.fishCaught.ContainsKey("(O)EasterEgg_Degend_Gold"))
+                    text = "The Golden Degend... I thought it was just a fisherman's fever dream.";
+                else if (Game1.player.fishCaught.ContainsKey("(O)EasterEgg_Degend"))
+                    text = "You caught a Degend? Remarkable. The tides are shifting.";
+
+                if (text != null)
+                {
+                    var field = typeof(Dialogue).GetField("text", BindingFlags.Instance | BindingFlags.NonPublic)
+                             ?? typeof(Dialogue).GetField("_text", BindingFlags.Instance | BindingFlags.NonPublic);
+
+                    field?.SetValue(dialogue, text);
                 }
             }
         }
@@ -354,7 +345,6 @@ namespace EasterEgg
 
     internal class FishingEngineExtension
     {
-        private readonly IModHelper helper;
-        public FishingEngineExtension(IModHelper helper) => this.helper = helper;
+        public FishingEngineExtension(IModHelper helper) { }
     }
 }
