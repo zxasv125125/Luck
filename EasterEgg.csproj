@@ -3,12 +3,15 @@
     <AssemblyName>EasterEgg</AssemblyName>
     <TargetFramework>net8.0</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="StardewModdingAPI">
       <HintPath>libs\StardewModdingAPI.dll</HintPath>
-      <Private>false</Private> </Reference>
+      <Private>false</Private>
+    </Reference>
     
     <Reference Include="StardewValley">
       <HintPath>libs\Stardew Valley.dll</HintPath>
