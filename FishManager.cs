@@ -23,7 +23,7 @@ namespace EasterEgg
             {
                 e.Edit(asset => {
                     var data = asset.AsDictionary<string, ObjectData>().Data;
-                    this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true);
+                    this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true, "Degend");
                 });
             }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Fish"))
@@ -50,7 +50,7 @@ namespace EasterEgg
                             Type = "Fish",
                                 Category = -4,
                                     Price = price,
-                                        Texture = $"Assets/Fish/{DisplayName}", 
+                                        Texture = $"Assets/Fish/{textureName}", 
                                             SpriteIndex = index,
                                                 ContextTags = contextTags,
                                                     ExcludeFromFishingCollection = false 
