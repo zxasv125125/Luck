@@ -1,14 +1,7 @@
 using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley;
-using StardewValley.GameData;
 using StardewValley.GameData.Objects;
 
 namespace EasterEgg
@@ -17,6 +10,9 @@ namespace EasterEgg
     {
         private IModHelper Helper;
         private IMonitor Monitor;
+        
+        // This must match the Prefix in AssetManager
+        private const string VirtualPath = "EasterEgg/Virtual/Textures/";
 
         public FishManager(IModHelper helper, IMonitor monitor)
         {
@@ -30,9 +26,7 @@ namespace EasterEgg
             {
                 e.Edit(asset => {
                     var data = asset.AsDictionary<string, ObjectData>().Data;
-                    
-                    //AddFishObject(data, ID, DisplayName, Description, Price, SpriteIndex, IsLegendary, FileName)
-                    this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true, "degend");
+                    this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true, "Degend");
                 });
             }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Fish"))
@@ -61,7 +55,7 @@ namespace EasterEgg
                 Type = "Fish",
                 Category = -4,
                 Price = price,
-                Texture = $"Assets/Fish/{textureName}",
+                Texture = $"{VirtualPath}{textureName}", 
                 SpriteIndex = index,
                 ContextTags = contextTags,
                 ExcludeFromFishingCollection = false 
