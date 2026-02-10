@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Reflection;
 using StardewModdingAPI;
@@ -7,9 +8,8 @@ namespace EasterEgg
 {
     public class AssetManager
     {
-        private IModHelper Helper;
-        private IMonitor Monitor;
-        private string RootPath = "EasterEgg.Assets.Fish"; 
+        private readonly IModHelper Helper;
+        private readonly IMonitor Monitor;
 
         public AssetManager(IModHelper helper, IMonitor monitor)
         {
@@ -21,20 +21,28 @@ namespace EasterEgg
         {
             if (e.NameWithoutLocale.IsEquivalentTo("Assets/Fish/degend"))
             {
-                e.LoadFrom(() => this.GetResourceStream("degend.png"), AssetLoadPriority.Medium);
+                e.LoadFrom(() => 
+                {
+                    string resourcePath = "EasterEgg.Assets.Fish.degend.png";
+                    
+                    var assembly = Assembly.GetExecutingAssembly();
+                    var stream = assembly.GetManifestResourceStream(resourcePath);
+
+                    if (stream == null)
+                    {
+                        this.Monitor.Log($"[Critical Error] not found '{resourcePath}' in DLL!", LogLevel.Error);
+                        this.Monitor.Log("😡:", LogLevel.Warn);
+                        foreach (string resName in assembly.GetManifestResourceNames())
+                        {
+                            this.Monitor.Log($" -> {resName}", LogLevel.Warn);
+                        }
+                        return null;
+                    }
+
+                    this.Monitor.Log($"[Success] loaded {resourcePath} successfully!", LogLevel.Debug);
+                    return stream;
+                }, AssetLoadPriority.Medium);
             }
-        }
-        private Stream GetResourceStream(string fileName)
-        {
-            string path = $"{this.RootPath}.{fileName}";
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
-            
-            if (stream == null)
-            {
-                this.Monitor.Log($"[AssetError] Find {path} in DLL not Found!", LogLevel.Error);
-                return null;
-            }
-            return stream;
         }
     }
 }
