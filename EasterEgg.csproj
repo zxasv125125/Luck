@@ -8,21 +8,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="StardewModdingAPI">
-      <HintPath>libs\StardewModdingAPI.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    
-    <Reference Include="StardewValley">
-      <HintPath>libs\Stardew Valley.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+  <Reference Include="StardewModdingAPI">
+    <HintPath>libs\StardewModdingAPI.dll</HintPath>
+    <Private>false</Private>
+  </Reference>
+  
+  <Reference Include="StardewValley">
+    <HintPath>libs\Stardew Valley.dll</HintPath>
+    <Private>false</Private>
+  </Reference>
 
-    <Reference Include="MonoGame.Framework">
-      <HintPath>libs\MonoGame.Framework.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
+  <Reference Include="StardewValley.GameData">
+    <HintPath>libs\StardewValley.GameData.dll</HintPath>
+    <Private>false</Private>
+  </Reference>
+
+  <Reference Include="MonoGame.Framework">
+    <HintPath>libs\MonoGame.Framework.dll</HintPath>
+    <Private>false</Private>
+  </Reference>
+</ItemGroup>
+
 
   <ItemGroup>
     <EmbeddedResource Include="Assets\Fish\*.png" />
