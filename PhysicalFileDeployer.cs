@@ -9,7 +9,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData;
-using StardewValley.GameData.Objects;;
+using StardewValley.GameData.Objects;
 
 namespace EasterEgg
 {
@@ -17,7 +17,7 @@ namespace EasterEgg
     {
         private readonly IMonitor Monitor;
         private readonly Assembly ModAssembly;
-        private readonly string TargetBaseDir = Path.Combine(Constants.GamePath, "GameFiles", "Content", "EasterEgg", "Virtual", "Textures");
+        private readonly string TargetBaseDir = Path.Combine(Constants.GamePath, "GameFiles", "Content", "Virtual", "Textures");
 
         public PhysicalFileDeployer(IMonitor monitor)
         {
@@ -34,24 +34,34 @@ namespace EasterEgg
                 {
                     Directory.CreateDirectory(this.TargetBaseDir);
                 }
+
                 string[] resourceNames = this.ModAssembly.GetManifestResourceNames();
                 var xnbResources = resourceNames.Where(r => r.EndsWith(".xnb", StringComparison.OrdinalIgnoreCase));
 
                 foreach (string resourcePath in xnbResources)
                 {
-                    string fileName = resourcePath.Split('.').Reverse().Take(2).Reverse().Aggregate((a, b) => a + "." + b);
+                    string[] parts = resourcePath.Split('.');
+                    if (parts.Length < 2) continue;
+
+                    string fileName = parts[parts.Length - 2] + "." + parts[parts.Length - 1];
                     string fullOutputPath = Path.Combine(this.TargetBaseDir, fileName);
+
                     if (!File.Exists(fullOutputPath))
                     {
                         using (Stream stream = this.ModAssembly.GetManifestResourceStream(resourcePath))
-                        using (FileStream fileStream = File.Create(fullOutputPath))
                         {
-                            stream.CopyTo(fileStream);
+                            if (stream != null)
+                            {
+                                using (FileStream fileStream = File.Create(fullOutputPath))
+                                {
+                                    stream.CopyTo(fileStream);
+                                }
+                            }
                         }
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
