@@ -22,6 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Data\Fish\*.png" />
+    <EmbeddedResource Include="Assets\Fish\*.png" />
   </ItemGroup>
 </Project>
