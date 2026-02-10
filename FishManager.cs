@@ -39,18 +39,42 @@ namespace EasterEgg
             this.eventLinker?.Subscribe();
         }
     }
+    internal enum TextureVariant
+    {
+        None,
+        Gold,
+        Shell
+    }
+
+    internal sealed class TextureRecipe
+    {
+        public string ResourceKey { get; }
+        public TextureVariant Variant { get; }
+
+        public TextureRecipe(string resourceKey, TextureVariant variant)
+        {
+            this.ResourceKey = resourceKey;
+            this.Variant = variant;
+        }
+    }
 
     internal class AssetRepository
     {
-        private readonly string RootPath = "Virtual/Textures";
-        private readonly Dictionary<string, string> internalPaths = new();
-        private readonly Dictionary<string, string> fallbackPaths = new();
+        private const string RootPath = "Virtual/Textures";
+        private const string DefaultTextureKey = "degend";
+        private readonly Dictionary<string, string> embeddedTextures = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, TextureRecipe> virtualTextureRecipes = new(StringComparer.OrdinalIgnoreCase);
 
         public AssetRepository()
         {
-            this.internalPaths.Add($"{this.RootPath}/degend".ToLower(), "EasterEgg.Virtual.Textures.degend.png");
-            this.internalPaths.Add($"{this.RootPath}/degend_gold".ToLower(), "EasterEgg.Virtual.Textures.degend_gold.png");
-            this.internalPaths.Add($"{this.RootPath}/eggshell".ToLower(), "EasterEgg.Virtual.Textures.eggshell.png");
+            this.IndexEmbeddedTextures();
+            this.RegisterTextureRecipe("degend", DefaultTextureKey, TextureVariant.None);
+            this.RegisterTextureRecipe("degend_gold", DefaultTextureKey, TextureVariant.Gold);
+            this.RegisterTextureRecipe("eggshell", DefaultTextureKey, TextureVariant.Shell);
+        }
+
+        private void IndexEmbeddedTextures()
+        {
             foreach (string resourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames())
             {
                 if (!resourceName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
@@ -62,23 +86,96 @@ namespace EasterEgg
 
                 string fileName = parts[^2];
                 if (fileName.Length == 0)
+                string key = parts[^2];
+                if (key.Length == 0)
                     continue;
 
                 this.fallbackPaths[$"{this.RootPath}/{fileName}".ToLower()] = resourceName;
+                this.embeddedTextures[key] = resourceName;
             }
         }
 
-        public bool TryGetResource(string assetName, out string? resourcePath)
+        private void RegisterTextureRecipe(string virtualTextureName, string resourceKey, TextureVariant variant)
         {
-            if (this.internalPaths.TryGetValue(assetName.ToLower(), out resourcePath))
-                return true;
-
-            return this.fallbackPaths.TryGetValue(assetName.ToLower(), out resourcePath);
+            string assetPath = this.GetVirtualPath(virtualTextureName);
+            this.virtualTextureRecipes[assetPath] = new TextureRecipe(resourceKey, variant);
         }
 
         public string GetVirtualPath(string filename)
         {
-            return $"{this.RootPath}/{filename}";
+            return $"{RootPath}/{filename}";
+        }
+
+        public bool TryLoadTexture(GraphicsDevice graphicsDevice, string assetName, out Texture2D? texture)
+        {
+            texture = null;
+            TextureRecipe? recipe = this.ResolveRecipe(assetName);
+            if (recipe == null)
+                return false;
+
+            if (!this.embeddedTextures.TryGetValue(recipe.ResourceKey, out string? resourcePath))
+                return false;
+
+            using Stream? stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
+            if (stream == null)
+                return false;
+
+            Texture2D baseTexture = Texture2D.FromStream(graphicsDevice, stream);
+            if (recipe.Variant == TextureVariant.None)
+            {
+                texture = baseTexture;
+                return true;
+            }
+            texture = this.BuildVariantTexture(graphicsDevice, baseTexture, recipe.Variant);
+            baseTexture.Dispose();
+            return true;
+        }
+
+        private TextureRecipe? ResolveRecipe(string assetName)
+        {
+            if (this.virtualTextureRecipes.TryGetValue(assetName, out TextureRecipe? recipe))
+                return recipe;
+
+            string key = assetName.Replace('\\', '/').Split('/').LastOrDefault() ?? string.Empty;
+            if (this.embeddedTextures.ContainsKey(key))
+                return new TextureRecipe(key, TextureVariant.None);
+
+            if (this.embeddedTextures.ContainsKey(DefaultTextureKey))
+                return new TextureRecipe(DefaultTextureKey, TextureVariant.None);
+
+            return null;
+        }
+
+        private Texture2D BuildVariantTexture(GraphicsDevice graphicsDevice, Texture2D baseTexture, TextureVariant variant)
+        {
+            Color[] pixels = new Color[baseTexture.Width * baseTexture.Height];
+            baseTexture.GetData(pixels);
+
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                Color c = pixels[i];
+                if (c.A == 0)
+                    continue;
+
+                pixels[i] = variant switch
+                {
+                    TextureVariant.Gold => new Color(
+                        (byte)Math.Min(255, c.R + 45),
+                        (byte)Math.Min(255, c.G + 35),
+                        (byte)Math.Max(0, c.B - 20),
+                        c.A),
+                    TextureVariant.Shell => new Color(
+                        (byte)((c.R + c.G + c.B) / 3),
+                        (byte)((c.R + c.G + c.B) / 3),
+                        (byte)((c.R + c.G + c.B) / 3),
+                        c.A),
+                    _ => c
+                };
+            }
+
+            Texture2D variantTexture = new Texture2D(graphicsDevice, baseTexture.Width, baseTexture.Height);
+            variantTexture.SetData(pixels);
+            return variantTexture;
         }
     }
 
@@ -95,14 +192,13 @@ namespace EasterEgg
 
         public void OnAssetRequested(AssetRequestedEventArgs e)
         {
-            if (this.repository.TryGetResource(e.NameWithoutLocale.Name, out string? resourcePath) && resourcePath != null)
+            if (this.repository.TryLoadTexture(Game1.graphics.GraphicsDevice, e.NameWithoutLocale.Name, out Texture2D? texture) && texture != null)
             {
-                e.LoadFrom(() =>
-                {
-                    using Stream? stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
-                    if (stream == null) return null!;
-                    return Texture2D.FromStream(Game1.graphics.GraphicsDevice, stream);
-                }, AssetLoadPriority.Medium);
+                e.LoadFrom(() => texture, AssetLoadPriority.Medium);
+            }
+            else if (e.NameWithoutLocale.Name.StartsWith("Virtual/Textures", StringComparison.OrdinalIgnoreCase))
+            {
+                this.helper.Monitor.Log($"Embedded texture not found for '{e.NameWithoutLocale.Name}'.", LogLevel.Warn);
             }
 
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Objects"))
