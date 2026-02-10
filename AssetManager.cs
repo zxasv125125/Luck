@@ -10,11 +10,13 @@ namespace EasterEgg
     {
         private readonly IModHelper Helper;
         private readonly IMonitor Monitor;
+        private readonly string AssemblyName;
 
         public AssetManager(IModHelper helper, IMonitor monitor)
         {
             this.Helper = helper;
             this.Monitor = monitor;
+            this.AssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
         }
 
         public void OnAssetRequested(AssetRequestedEventArgs e)
@@ -23,23 +25,20 @@ namespace EasterEgg
             {
                 e.LoadFrom(() => 
                 {
-                    string resourcePath = "EasterEgg.Assets.Fish.degend.png";
+                    string resourceName = $"{this.AssemblyName}.Assets.Fish.degend.png";
                     
-                    var assembly = Assembly.GetExecutingAssembly();
-                    var stream = assembly.GetManifestResourceStream(resourcePath);
+                    var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
 
                     if (stream == null)
                     {
-                        this.Monitor.Log($"[Critical Error] not found '{resourcePath}' in DLL!", LogLevel.Error);
-                        this.Monitor.Log("😡:", LogLevel.Warn);
-                        foreach (string resName in assembly.GetManifestResourceNames())
+                        this.Monitor.Log($"[AssetError] Not Found: {resourceName}", LogLevel.Error);
+                        foreach (var name in Assembly.GetExecutingAssembly().GetManifestResourceNames())
                         {
-                            this.Monitor.Log($" -> {resName}", LogLevel.Warn);
+                            this.Monitor.Log($"Filee inside DLL: {name}", LogLevel.Trace);
                         }
                         return null;
                     }
 
-                    this.Monitor.Log($"[Success] loaded {resourcePath} successfully!", LogLevel.Debug);
                     return stream;
                 }, AssetLoadPriority.Medium);
             }
