@@ -15,8 +15,8 @@
       <Private>false</Private>
     </Reference>
 
-    <Reference Include="Microsoft.Xna.Framework">
-      <HintPath>libs\Microsoft.Xna.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>libs\MonoGame.Framework.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
