@@ -26,8 +26,6 @@ namespace EasterEgg
             this.ModAssembly = Assembly.GetExecutingAssembly();
             this.ResourceNames = this.ModAssembly.GetManifestResourceNames();
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
-            
-            this.Monitor.Log("Resource Registrar initialized: Monitoring 'Virtual/Textures/' in DLL.", LogLevel.Debug);
         }
 
         private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
@@ -42,7 +40,6 @@ namespace EasterEgg
 
                     if (fullResourceName == null)
                     {
-                        this.Monitor.Log($"[DLL Search] Could not find '{fileName}.png' embedded in DLL.", LogLevel.Trace);
                         return null;
                     }
 
@@ -56,8 +53,6 @@ namespace EasterEgg
                     }
                     catch (Exception ex)
                     {
-                        this.Monitor.Log($"[DLL Error] Failed to stream {fullResourceName}: {ex.Message}", LogLevel.Error);
-                        return null;
                     }
                 }, AssetLoadPriority.High);
             }
