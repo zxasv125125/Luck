@@ -21,21 +21,20 @@ namespace EasterEgg
         {
             if (e.NameWithoutLocale.IsEquivalentTo("Assets/Fish/degend"))
             {
-                // เปลี่ยนมาใช้ LoadFromDll ที่คืนค่าเป็น Stream
-                e.LoadFrom(() => this.LoadFromDll("degend.png"), AssetLoadPriority.Medium);
+                e.LoadFrom(() => this.GetResourceStream("degend.png"), AssetLoadPriority.Medium);
             }
         }
-        private Stream LoadFromDll(string fileName)
+        private Stream GetResourceStream(string fileName)
         {
             string path = $"{this.RootPath}.{fileName}";
             var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
             
             if (stream == null)
             {
-                this.Monitor.Log($"Can't find {path} in DLL!", LogLevel.Error);
+                this.Monitor.Log($"[AssetError] Find {path} in DLL not Found!", LogLevel.Error);
                 return null;
             }
-            return stream; 
+            return stream;
         }
     }
 }
