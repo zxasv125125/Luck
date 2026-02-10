@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -10,12 +11,13 @@ namespace EasterEgg
     {
         private readonly IModHelper Helper;
         private readonly IMonitor Monitor;
-        private readonly string RootPath = "EasterEgg.Assets.Fish";
+        private readonly string[] ResourceNames;
 
         public AssetManager(IModHelper helper, IMonitor monitor)
         {
             this.Helper = helper;
             this.Monitor = monitor;
+            this.ResourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
         }
 
         public void OnAssetRequested(AssetRequestedEventArgs e)
@@ -25,18 +27,16 @@ namespace EasterEgg
                 e.LoadFrom(() => 
                 {
                     string assetName = Path.GetFileName(e.NameWithoutLocale.ToString());
-                    string resourcePath = $"{this.RootPath}.{assetName.ToLower()}.png";
-                    
-                    var assembly = Assembly.GetExecutingAssembly();
-                    var stream = assembly.GetManifestResourceStream(resourcePath);
-                    
-                    if (stream == null)
+                    string targetResource = this.ResourceNames.FirstOrDefault(r => 
+                        r.Contains(assetName, StringComparison.OrdinalIgnoreCase) && r.EndsWith(".png"));
+
+                    if (targetResource == null)
                     {
-                        this.Monitor.Log($"[AssetError] Resource '{resourcePath}' not found in DLL.", LogLevel.Warn);
+                        this.Monitor.Log($"[AssetError] Could not find any resource matching '{assetName}' in DLL.", LogLevel.Error);
                         return null;
                     }
 
-                    return stream;
+                    return Assembly.GetExecutingAssembly().GetManifestResourceStream(targetResource);
                 }, AssetLoadPriority.Medium);
             }
         }
