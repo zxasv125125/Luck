@@ -23,9 +23,7 @@ namespace EasterEgg
             {
                 e.Edit(asset => {
                     var data = asset.AsDictionary<string, ObjectData>().Data;
-                    this.AddFishObject(data, "fish_common", "name", "A very common small fish.", 50, 0, false);
-                    this.AddFishObject(data, "fish_rare", "name", "A beautiful and rare golden fish.", 500, 1, false, isRare: true);
-                    this.AddFishObject(data, "fish_legend", "name", "The ruler of the deep ocean.", 2500, 2, true);
+                    this.AddFishObject(data, "item_legend", "Degend", "The Luck Species but it seems to be marines animal.", 2500, 2, true);
                 });
             }
 
@@ -33,9 +31,7 @@ namespace EasterEgg
             {
                 e.Edit(asset => {
                     var data = asset.AsDictionary<string, string>().Data;
-                    data["fish_common"] = "name/40/smooth/5/15/600 2600/spring summer/both/-1/0/.4/.1/0/true";
-                    data["fish_lare"] = "name/75/mixed/15/30/600 1900/fall/sunny/685 .35/3/.2/.3/0/true";
-                    data["fish_legend"] = "name/110/sinker/40/60/600 2000/winter/rainy/688 .05/10/0/.1/10/false";
+                    data["fish_legend"] = "Degend/EasterEgg_Degend/sinker/40/60/600 2000/winter/rainy/688 .05/10/0/.1/10/false";
                 });
             }
         }
@@ -47,11 +43,6 @@ namespace EasterEgg
             {
                 contextTags.Add("fish_legendary");
                 contextTags.Add("item_legendary");
-            }
-            if (isRare)
-            {
-                contextTags.Add("item_rare");
-                contextTags.Add("fish_rare"); //
             }
 
             data[id] = new ObjectData
