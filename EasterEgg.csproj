@@ -27,6 +27,7 @@
     <HintPath>libs\MonoGame.Framework.dll</HintPath>
     <Private>false</Private>
   </Reference>
+
    <Reference Include="Mono.Android">
   <HintPath>libs\Mono.Android.dll</HintPath>
   <Private>false</Private>
@@ -36,6 +37,9 @@
 
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\Fish\*.png" />
+  <Content Remove="Assets\Fish\**\*.png" />
+  <None Remove="Assets\Fish\**\*.png" />
+  
+  <EmbeddedResource Include="Assets\Fish\**\*.png" />
   </ItemGroup>
-</Project>
+
