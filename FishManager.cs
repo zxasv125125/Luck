@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley.GameData.Objects;
-using StardewValley.GameData.Fish;
 
 namespace EasterEgg
 {
@@ -23,20 +22,21 @@ namespace EasterEgg
             {
                 e.Edit(asset => {
                     var data = asset.AsDictionary<string, ObjectData>().Data;
-                    this.AddFishObject(data, "item_legend", "Degend", "The Luck Species but it seems to be marines animal.", 2500, 2, true);
+                    
+                    // ใช้ ID เฉพาะของมอดเราเอง (EasterEgg_Degend)
+                    this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true);
                 });
             }
-
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Fish"))
             {
                 e.Edit(asset => {
                     var data = asset.AsDictionary<string, string>().Data;
-                    data["fish_legend"] = "Degend/EasterEgg_Degend/sinker/40/60/600 2000/winter/rainy/688 .05/10/0/.1/10/false";
+                    data["EasterEgg_Degend"] = "Degend/110/sinker/40/60/600 2000/winter/rainy/688 .05/10/0/.1/10/false";
                 });
             }
         }
 
-        private void AddFishObject(IDictionary<string, ObjectData> data, string id, string name, string description, int price, int index, bool isLegendary, bool isRare = false)
+        private void AddFishObject(IDictionary<string, ObjectData> data, string id, string name, string description, int price, int index, bool isLegendary)
         {
             var contextTags = new List<string>();
             if (isLegendary)
@@ -47,15 +47,15 @@ namespace EasterEgg
 
             data[id] = new ObjectData
             {
-                Name = Easter_Degend,
-                DisplayName = Degend,
-                Description = The Luck Species but it seems to be marines animal,
+                Name = id, // EasterEgg_Degend
+                DisplayName = name, // Degend
+                Description = description,
                 Type = "Fish",
                 Category = ObjectData.FishCategory,
-                Price = 30,000,
-                Texture = "Assets/Fish/degend.png",
+                Price = price,
+                Texture = "Assets/Fish/degend",
                 SpriteIndex = index,
-                ContextTags = ["fish_legendary", "item_legendy"]
+                ContextTags = contextTags,
                 ExcludeFromFishingCollection = false 
             };
         }
