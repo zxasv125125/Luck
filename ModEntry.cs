@@ -1,7 +1,10 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.GameData;
 using StardewValley.GameData.Objects;
+using System;
+using System.IO;
 
 namespace EasterEgg
 {
@@ -9,11 +12,11 @@ namespace EasterEgg
     {
         public AssetManager Assets;
         public FishManager Fish;
+
         public override void Entry(IModHelper helper)
         {
             this.Assets = new AssetManager(helper, this.Monitor);
             this.Fish = new FishManager(helper, this.Monitor);
-            
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
         }
 
