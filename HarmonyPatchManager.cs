@@ -10,7 +10,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData;
-using StardewValley.GameData.Objects;;
+using StardewValley.GameData.Objects;
 
 namespace EasterEgg
 {
