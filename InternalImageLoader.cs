@@ -26,7 +26,6 @@ namespace EasterEgg
 
             if (target == null)
             {
-                monitor.Log($"[Critical] DLL Resource '{fileName}' NOT FOUND. Resources available: {string.Join(", ", resourceNames)}", LogLevel.Error);
                 return null;
             }
 
@@ -40,8 +39,6 @@ namespace EasterEgg
             }
             catch (Exception ex)
             {
-                monitor.Log($"[Critical] Failed to load {target}: {ex.Message}", LogLevel.Error);
-                return null;
             }
         }
     }
