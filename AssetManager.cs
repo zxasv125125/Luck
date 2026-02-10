@@ -10,7 +10,7 @@ namespace EasterEgg
     {
         private IModHelper Helper;
         private IMonitor Monitor;
-        private string RootPath = "EasterEgg.Assets";
+        private string RootPath = "EasterEgg.Assets.Fish"; 
 
         public AssetManager(IModHelper helper, IMonitor monitor)
         {
@@ -20,21 +20,24 @@ namespace EasterEgg
 
         public void OnAssetRequested(AssetRequestedEventArgs e)
         {
-            if (e.NameWithoutLocale.IsEquivalentTo("Assets/Fish"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Assets/Fish/degend"))
+            {
                 e.LoadFrom(() => this.LoadFromDll("degend.png"), AssetLoadPriority.Medium);
+            }
         }
 
         private Texture2D LoadFromDll(string fileName)
         {
             string path = $"{this.RootPath}.{fileName}";
+            
             using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+            
             if (stream == null)
             {
-                this.Monitor.Log($"can't find {path} in DLL NOTFOUND!", LogLevel.Error);
+                this.Monitor.Log($"Can't find {path} in DLL!", LogLevel.Error);
                 return null;
             }
             return Texture2D.FromStream(Game1.graphics.GraphicsDevice, stream);
         }
     }
 }
-
