@@ -47,15 +47,15 @@ namespace EasterEgg
 
             data[id] = new ObjectData
             {
-                Name = id,
-                DisplayName = name,
-                Description = description,
+                Name = Easter_Degend,
+                DisplayName = Degend,
+                Description = The Luck Species but it seems to be marines animal,
                 Type = "Fish",
                 Category = ObjectData.FishCategory,
-                Price = price,
-                Texture = "Maps/FishSprites",
+                Price = 30,000,
+                Texture = "Data/Fish/degend.png",
                 SpriteIndex = index,
-                ContextTags = contextTags,
+                ContextTags = ["fish_legendary", "item_legendy"]
                 ExcludeFromFishingCollection = false 
             };
         }
