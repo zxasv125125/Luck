@@ -9,6 +9,7 @@ using StardewValley;
 using StardewValley.GameData;
 using StardewValley.GameData.Objects;
 using AssetManager;
+using ResourceRedirector;
 
 namespace EasterEgg
 {
