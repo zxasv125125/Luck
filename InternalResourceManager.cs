@@ -27,8 +27,6 @@ namespace EasterEgg
             this.ResourceNames = this.ModAssembly.GetManifestResourceNames();
 
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
-            
-            this.Monitor.Log($"Internal Resource Manager active. Monitoring: {TargetPath}", LogLevel.Debug);
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
@@ -43,8 +41,6 @@ namespace EasterEgg
 
                     if (resourcePath == null)
                     {
-                        this.Monitor.Log($"[DLL Search] Resource '{fileName}.png' not found in DLL Manifest.", LogLevel.Trace);
-                        return null;
                     }
 
                     try
@@ -57,8 +53,6 @@ namespace EasterEgg
                     }
                     catch (Exception ex)
                     {
-                        this.Monitor.Log($"[DLL Error] Failed to load {resourcePath}: {ex.Message}", LogLevel.Error);
-                        return null;
                     }
                 }, AssetLoadPriority.High);
             }
