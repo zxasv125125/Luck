@@ -15,7 +15,7 @@ namespace EasterEgg
     {
         private IModHelper Helper;
         private IMonitor Monitor;
-        private const string VirtualPath = "EasterEgg/Virtual/Textures/";
+        private const string VirtualPath = "Virtual/Textures/";
 
         public FishManager(IModHelper helper, IMonitor monitor)
         {
