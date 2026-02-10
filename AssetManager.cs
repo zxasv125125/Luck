@@ -4,7 +4,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 
-namespace MyCustomMod
+namespace EasterEgg
 {
     public class AssetManager
     {
