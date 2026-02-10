@@ -1,7 +1,12 @@
 using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.GameData;
 using StardewValley.GameData.Objects;
 
 namespace EasterEgg
@@ -10,8 +15,6 @@ namespace EasterEgg
     {
         private IModHelper Helper;
         private IMonitor Monitor;
-        
-        // This must match the Prefix in AssetManager
         private const string VirtualPath = "EasterEgg/Virtual/Textures/";
 
         public FishManager(IModHelper helper, IMonitor monitor)
@@ -26,7 +29,7 @@ namespace EasterEgg
             {
                 e.Edit(asset => {
                     var data = asset.AsDictionary<string, ObjectData>().Data;
-                    this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true, "Degend");
+                    this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true, "degend");
                 });
             }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Fish"))
