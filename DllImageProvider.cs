@@ -26,8 +26,6 @@ namespace EasterEgg
             this.ModAssembly = Assembly.GetExecutingAssembly();
             this.ManifestResources = this.ModAssembly.GetManifestResourceNames();
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
-            
-            this.Monitor.Log($"[DllImageProvider] Monitoring virtual path: {VirtualPathPrefix}", LogLevel.Debug);
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
@@ -43,8 +41,6 @@ namespace EasterEgg
 
                     if (resourceName == null)
                     {
-                        this.Monitor.Log($"[DllImageProvider] Error: {assetKey} not found in DLL resources.", LogLevel.Error);
-                        return null;
                     }
 
                     try
@@ -57,8 +53,6 @@ namespace EasterEgg
                     }
                     catch (Exception ex)
                     {
-                        this.Monitor.Log($"[DllImageProvider] Failed to render {assetKey}: {ex.Message}", LogLevel.Error);
-                        return null;
                     }
                 }, AssetLoadPriority.High);
             }
