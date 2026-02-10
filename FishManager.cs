@@ -44,17 +44,36 @@ namespace EasterEgg
     {
         private readonly string RootPath = "Virtual/Textures";
         private readonly Dictionary<string, string> internalPaths = new();
+        private readonly Dictionary<string, string> fallbackPaths = new();
 
         public AssetRepository()
         {
             this.internalPaths.Add($"{this.RootPath}/degend".ToLower(), "EasterEgg.Virtual.Textures.degend.png");
             this.internalPaths.Add($"{this.RootPath}/degend_gold".ToLower(), "EasterEgg.Virtual.Textures.degend_gold.png");
             this.internalPaths.Add($"{this.RootPath}/eggshell".ToLower(), "EasterEgg.Virtual.Textures.eggshell.png");
+            foreach (string resourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames())
+            {
+                if (!resourceName.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                string[] parts = resourceName.Split('.');
+                if (parts.Length < 2)
+                    continue;
+
+                string fileName = parts[^2];
+                if (fileName.Length == 0)
+                    continue;
+
+                this.fallbackPaths[$"{this.RootPath}/{fileName}".ToLower()] = resourceName;
+            }
         }
 
         public bool TryGetResource(string assetName, out string? resourcePath)
         {
-            return this.internalPaths.TryGetValue(assetName.ToLower(), out resourcePath);
+            if (this.internalPaths.TryGetValue(assetName.ToLower(), out resourcePath))
+                return true;
+
+            return this.fallbackPaths.TryGetValue(assetName.ToLower(), out resourcePath);
         }
 
         public string GetVirtualPath(string filename)
@@ -175,7 +194,7 @@ namespace EasterEgg
             {
                 if (Game1.player.currentLocation?.Name == "Beach" && Game1.isRaining)
                 {
-                    if (rod.isPullingFish && !rod.hit)
+                    if (rod.fishCaught && !rod.hit)
                     {
                         var field = typeof(FishingRod).GetField("whichFish", BindingFlags.NonPublic | BindingFlags.Instance);
                         if (field != null && (string?)field.GetValue(rod) == "EasterEgg_Degend")
