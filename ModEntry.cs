@@ -26,8 +26,6 @@ namespace EasterEgg
             new DllImageProvider(helper, this.Monitor);
             new ResourceRegistrar(helper, this.Monitor);
             new InternalResourceManager(helper, this.Monitor);
-            new HarmonyPatchManager(this.ModManifest.UniqueID, this.Monitor);
-            new HarmonyResourcePatcher(this.ModManifest.UniqueID, this.Monitor);
 
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
             
