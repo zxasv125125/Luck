@@ -10,7 +10,7 @@ namespace EasterEgg
     {
         private IModHelper Helper;
         private IMonitor Monitor;
-        private string RootPath = "MyCustomMod.Assets"; // ชื่อ Namespace.โฟลเดอร์
+        private string RootPath = "EasterEgg.Assets";
 
         public AssetManager(IModHelper helper, IMonitor monitor)
         {
@@ -20,7 +20,7 @@ namespace EasterEgg
 
         public void OnAssetRequested(AssetRequestedEventArgs e)
         {
-            if (e.NameWithoutLocale.IsEquivalentTo("Maps/MyFishSprites"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Data/Fish"))
                 e.LoadFrom(() => this.LoadFromDll("fish.png"), AssetLoadPriority.Medium);
         }
 
@@ -30,7 +30,7 @@ namespace EasterEgg
             using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
             if (stream == null)
             {
-                this.Monitor.Log($"ค้นหาไฟล์ {path} ใน DLL ไม่เจอ!", LogLevel.Error);
+                this.Monitor.Log($"can't find {path} in DLL NOTFOUND!", LogLevel.Error);
                 return null;
             }
             return Texture2D.FromStream(Game1.graphics.GraphicsDevice, stream);
