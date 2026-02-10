@@ -44,9 +44,9 @@
   </ItemGroup>
 
   <ItemGroup>
-  <EmbeddedResource Include="Virtual\Texture\*.png" />
-  <EmbeddedResource Include="Virtual\Texture\*.xnb" />
-  <None Remove="Assets\Fish\*.png" />
-  <None Remove="Assets\Fish\*.xnb" />
+  <EmbeddedResource Include="Virtual\Textures\*.png" />
+  <EmbeddedResource Include="Virtual\Textures\*.xnb" />
+  <None Remove="Virtual\Textures\*.png" />
+  <None Remove="Virtual\Textures\*.xnb" />
 </ItemGroup>
 </Project>
