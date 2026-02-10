@@ -53,7 +53,7 @@ namespace EasterEgg
                 Type = "Fish",
                 Category = ObjectData.FishCategory,
                 Price = 30,000,
-                Texture = "Data/Fish/degend.png",
+                Texture = "Fish\degend.png",
                 SpriteIndex = index,
                 ContextTags = ["fish_legendary", "item_legendy"]
                 ExcludeFromFishingCollection = false 
