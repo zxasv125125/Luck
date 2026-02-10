@@ -20,7 +20,7 @@ namespace EasterEgg
 
         public void OnAssetRequested(AssetRequestedEventArgs e)
         {
-            if (e.NameWithoutLocale.IsEquivalentTo("Fish\"))
+            if (e.NameWithoutLocale.IsEquivalentTo("Assets/Fish"))
                 e.LoadFrom(() => this.LoadFromDll("degend.png"), AssetLoadPriority.Medium);
         }
 
