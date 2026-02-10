@@ -175,7 +175,7 @@ namespace EasterEgg
             {
                 if (Game1.player.currentLocation?.Name == "Beach" && Game1.isRaining)
                 {
-                    if (rod.pullingFish && !rod.hit)
+                    if (rod.isPullingFish && !rod.hit)
                     {
                         var field = typeof(FishingRod).GetField("whichFish", BindingFlags.NonPublic | BindingFlags.Instance);
                         if (field != null && (string?)field.GetValue(rod) == "EasterEgg_Degend")
