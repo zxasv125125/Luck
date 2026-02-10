@@ -23,8 +23,6 @@ namespace EasterEgg
             {
                 e.Edit(asset => {
                     var data = asset.AsDictionary<string, ObjectData>().Data;
-                    
-                    // ใช้ ID เฉพาะของมอดเราเอง (EasterEgg_Degend)
                     this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true);
                 });
             }
@@ -36,8 +34,7 @@ namespace EasterEgg
                 });
             }
         }
-
-        private void AddFishObject(IDictionary<string, ObjectData> data, string id, string name, string description, int price, int index, bool isLegendary)
+        private void AddFishObject(IDictionary<string, ObjectData> data, string id, string name, string description, int price, int index, bool isLegendary, string textureName)
         {
             var contextTags = new List<string>();
             if (isLegendary)
@@ -45,20 +42,19 @@ namespace EasterEgg
                 contextTags.Add("fish_legendary");
                 contextTags.Add("item_legendary");
             }
-
             data[id] = new ObjectData
             {
-                Name = id, // EasterEgg_Degend
-                DisplayName = name, // Degend
-                Description = description,
-                Type = "Fish",
-                Category = -4,
-                Price = price,
-                Texture = "Assets/Fish/degend",
-                SpriteIndex = index,
-                ContextTags = contextTags,
-                ExcludeFromFishingCollection = false 
-            };
+                Name = id,
+                    DisplayName = name,
+                        Description = description,
+                            Type = "Fish",
+                                Category = -4,
+                                    Price = price,
+                                        Texture = $"Assets/Fish/{DisplayName}", 
+                                            SpriteIndex = index,
+                                                ContextTags = contextTags,
+                                                    ExcludeFromFishingCollection = false 
+                };
         }
     }
 }
