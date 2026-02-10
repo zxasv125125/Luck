@@ -23,7 +23,7 @@ namespace EasterEgg
             {
                 e.Edit(asset => {
                     var data = asset.AsDictionary<string, ObjectData>().Data;
-                    this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true, "Degend");
+                    this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true, "degend");
                 });
             }
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Fish"))
