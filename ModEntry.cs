@@ -3,15 +3,15 @@ using StardewModdingAPI.Events;
 
 namespace EasterEgg
 {
-    public class ModEntry : EasterEgg
+    public class ModEntry : Mod 
     {
         public AssetManager Assets;
         public FishManager Fish;
-
         public override void Entry(IModHelper helper)
         {
             this.Assets = new AssetManager(helper, this.Monitor);
             this.Fish = new FishManager(helper, this.Monitor);
+            
             helper.Events.Content.AssetRequested += this.OnAssetRequested;
         }
 
@@ -22,4 +22,3 @@ namespace EasterEgg
         }
     }
 }
-
