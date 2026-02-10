@@ -1,10 +1,7 @@
-using System;
+using System.IO;
 using System.Reflection;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewValley;
-using StardewValley.GameData.Objects;
 
 namespace EasterEgg
 {
@@ -24,22 +21,21 @@ namespace EasterEgg
         {
             if (e.NameWithoutLocale.IsEquivalentTo("Assets/Fish/degend"))
             {
+                // เปลี่ยนมาใช้ LoadFromDll ที่คืนค่าเป็น Stream
                 e.LoadFrom(() => this.LoadFromDll("degend.png"), AssetLoadPriority.Medium);
             }
         }
-
-        private Texture2D LoadFromDll(string fileName)
+        private Stream LoadFromDll(string fileName)
         {
             string path = $"{this.RootPath}.{fileName}";
-            
-            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
             
             if (stream == null)
             {
                 this.Monitor.Log($"Can't find {path} in DLL!", LogLevel.Error);
                 return null;
             }
-            return Texture2D.FromStream(Game1.graphics.GraphicsDevice, stream);
+            return stream; 
         }
     }
 }
