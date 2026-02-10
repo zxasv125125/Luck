@@ -1,7 +1,14 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.GameData;
 using StardewValley.GameData.Objects;
 
 namespace EasterEgg
