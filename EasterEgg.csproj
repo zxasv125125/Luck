@@ -5,7 +5,14 @@
     <LangVersion>latest</LangVersion>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <Deterministic>true</Deterministic>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RuntimeIdentifier>android-x64</RuntimeIdentifier>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Mono.android-x64" Version="7.0.2.106" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="StardewModdingAPI">
