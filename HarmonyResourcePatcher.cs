@@ -39,15 +39,12 @@ namespace EasterEgg
                 Monitor.Log($"Harmony patching failed: {ex.Message}", LogLevel.Error);
             }
         }
-
-        // ตัวอย่างการทำ Postfix เพื่อแทรกรูปจาก DLL เมื่อเกมเรียกหา Path เฉพาะ
         public static void Postfix_TextureLoad(ref Texture2D __result, string assetName)
         {
-            // ถ้าเกมเรียกหา Path Virtual/Textures/ ให้เราเอาของใน DLL ยัดใส่มือเกมทันที
             if (assetName.StartsWith("Virtual/Textures/", StringComparison.OrdinalIgnoreCase))
             {
                 string fileName = Path.GetFileName(assetName);
-                string resourceName = $"EasterEgg.Assets.Fish.{fileName}.png"; // อิงตามโครงสร้างในรูปของคุณ
+                string resourceName = $"EasterEgg.Assets.Fish.{fileName}.png";
 
                 try
                 {
