@@ -8,6 +8,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData;
 using StardewValley.GameData.Objects;
+using AssetManager;
 
 namespace EasterEgg
 {
