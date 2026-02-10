@@ -23,6 +23,8 @@ namespace EasterEgg
             {
                 e.Edit(asset => {
                     var data = asset.AsDictionary<string, ObjectData>().Data;
+                    
+                    //AddFishObject(data, ID, DisplayName, Description, Price, SpriteIndex, IsLegendary, FileName)
                     this.AddFishObject(data, "EasterEgg_Degend", "Degend", "The Luck Species but it seems to be marines animal.", 30000, 0, true, "degend");
                 });
             }
@@ -34,6 +36,7 @@ namespace EasterEgg
                 });
             }
         }
+
         private void AddFishObject(IDictionary<string, ObjectData> data, string id, string name, string description, int price, int index, bool isLegendary, string textureName)
         {
             var contextTags = new List<string>();
@@ -42,19 +45,21 @@ namespace EasterEgg
                 contextTags.Add("fish_legendary");
                 contextTags.Add("item_legendary");
             }
+
             data[id] = new ObjectData
             {
                 Name = id,
-                    DisplayName = name,
-                        Description = description,
-                            Type = "Fish",
-                                Category = -4,
-                                    Price = price,
-                                        Texture = $"Assets/Fish/{textureName}", 
-                                            SpriteIndex = index,
-                                                ContextTags = contextTags,
-                                                    ExcludeFromFishingCollection = false 
-                };
+                DisplayName = name,
+                Description = description,
+                Type = "Fish",
+                Category = -4,
+                Price = price,
+                // Now uses the textureName parameter
+                Texture = $"Assets/Fish/{textureName}",
+                SpriteIndex = index,
+                ContextTags = contextTags,
+                ExcludeFromFishingCollection = false 
+            };
         }
     }
 }
