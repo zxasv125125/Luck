@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>EasterEgg</AssemblyName>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-androi</TargetFramework>
     <LangVersion>latest</LangVersion>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <Deterministic>true</Deterministic>
@@ -11,14 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mono.android-x64" Version="7.0.2.106" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Mono.Android">
-      <HintPath>libs\Mono.Android.dll</HintPath>
-      <Private>true</Private>
-    </Reference>
     
     <Reference Include="StardewModdingAPI">
       <HintPath>libs\StardewModdingAPI.dll</HintPath>
