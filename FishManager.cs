@@ -52,7 +52,7 @@ namespace EasterEgg
                 DisplayName = name, // Degend
                 Description = description,
                 Type = "Fish",
-                Category = ObjectData.FishCategory,
+                Category = -4,
                 Price = price,
                 Texture = "Assets/Fish/degend",
                 SpriteIndex = index,
