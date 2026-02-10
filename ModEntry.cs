@@ -11,6 +11,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData;
 using StardewValley.GameData.Objects;
+using SMAPI.Toolkit.CoreInterfaces;
 
 namespace EasterEgg
 {
@@ -25,8 +26,6 @@ namespace EasterEgg
             this.Fish = new FishManager(helper, this.Monitor);
             new DllImageProvider(helper, this.Monitor);
             new ResourceRegistrar(helper, this.Monitor);
-            new ResourceRedirector(helper, this.Monitor);
-            new InternalImageLoader(helper, this.Monitor);
             new InternalResourceManager(helper, this.Monitor);
             new HarmonyPatchManager(this.ModManifest.UniqueID, this.Monitor);
             new HarmonyResourcePatcher(this.ModManifest.UniqueID, this.Monitor);
