@@ -24,6 +24,7 @@ namespace EasterEgg
             this.Assets = new AssetManager(helper, this.Monitor);
             this.Fish = new FishManager(helper, this.Monitor);
             new DllImageProvider(helper, this.Monitor);
+            new XnbInternalProvider(helper);
             new ResourceRegistrar(helper, this.Monitor);
             new InternalResourceManager(helper, this.Monitor);
 
