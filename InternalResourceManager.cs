@@ -36,7 +36,8 @@ namespace EasterEgg
             if (e.NameWithoutLocale.ToString().StartsWith(TargetPath, StringComparison.OrdinalIgnoreCase))
             {
                 e.LoadFrom(() =>
-                           string fileName = Path.GetFileName(e.NameWithoutLocale.ToString());
+                {
+                    string fileName = Path.GetFileName(e.NameWithoutLocale.ToString());
                     string? resourcePath = this.ResourceNames.FirstOrDefault(r => 
                         r.EndsWith($"{fileName}.png", StringComparison.OrdinalIgnoreCase));
 
