@@ -17,7 +17,7 @@ namespace EasterEgg
     {
         private readonly IMonitor Monitor;
         private readonly Assembly ModAssembly;
-        private readonly string TargetBaseDir = Path.Combine(Constants.GamePath, "GameFiles", "Content", "Virtual", "Textures");
+        private readonly string TargetBaseDir = Path.Combine(Constants.GamePath, "GameFiles", "Content", "EasterEgg", "Virtual", "Textures");
 
         public PhysicalFileDeployer(IMonitor monitor)
         {
