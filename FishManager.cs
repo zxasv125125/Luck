@@ -9,7 +9,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData.Objects;
-using StardewValley.GameData.Fish;
+using StardewValley.GameData;
 using StardewValley.Menus;
 using StardewValley.Tools;
 
