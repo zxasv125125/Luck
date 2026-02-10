@@ -8,38 +8,36 @@
   </PropertyGroup>
 
   <ItemGroup>
-  <Reference Include="StardewModdingAPI">
-    <HintPath>libs\StardewModdingAPI.dll</HintPath>
-    <Private>false</Private>
-  </Reference>
-  
-  <Reference Include="StardewValley">
-    <HintPath>libs\Stardew Valley.dll</HintPath>
-    <Private>false</Private>
-  </Reference>
+    <Reference Include="StardewModdingAPI">
+      <HintPath>libs\StardewModdingAPI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    
+    <Reference Include="StardewValley">
+      <HintPath>libs\Stardew Valley.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
 
-  <Reference Include="StardewValley.GameData">
-    <HintPath>libs\StardewValley.GameData.dll</HintPath>
-    <Private>false</Private>
-  </Reference>
+    <Reference Include="StardewValley.GameData">
+      <HintPath>libs\StardewValley.GameData.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
 
-  <Reference Include="MonoGame.Framework">
-    <HintPath>libs\MonoGame.Framework.dll</HintPath>
-    <Private>false</Private>
-  </Reference>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>libs\MonoGame.Framework.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
 
-   <Reference Include="Mono.Android">
-  <HintPath>libs\Mono.Android.dll</HintPath>
-  <Private>false</Private>
-  </Reference>
-
-</ItemGroup>
-
-
-  <ItemGroup>
-  <Content Remove="Assets\Fish\**\*.png" />
-  <None Remove="Assets\Fish\**\*.png" />
-  
-  <EmbeddedResource Include="Assets\Fish\**\*.png" />
+    <Reference Include="Mono.Android">
+      <HintPath>libs\Mono.Android.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="Assets\Fish\**\*.png" />
+    <None Remove="Assets\Fish\**\*.png" />
+    <EmbeddedResource Include="Assets\Fish\**\*.png" />
+  </ItemGroup>
+
+</Project>
