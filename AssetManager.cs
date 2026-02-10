@@ -22,8 +22,6 @@ namespace EasterEgg
         {
             if (e.NameWithoutLocale.IsEquivalentTo("Maps/MyFishSprites"))
                 e.LoadFrom(() => this.LoadFromDll("fish.png"), AssetLoadPriority.Medium);
-            if (e.NameWithoutLocale.IsEquivalentTo("Animals/MyCustomAnimals"))
-                e.LoadFrom(() => this.LoadFromDll("animals.png"), AssetLoadPriority.Medium);
         }
 
         private Texture2D LoadFromDll(string fileName)
