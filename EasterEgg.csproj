@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>EasterEgg</AssemblyName>
-    <TargetFramework>net10.0-androi</TargetFramework>
+    <TargetFramework>net10.0-android</TargetFramework>
     <LangVersion>latest</LangVersion>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <Deterministic>true</Deterministic>
